@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BM | Official Business Showcase</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark:      '#080C14',
+                            deeper:    '#050810',
+                            card:      '#0F1826',
+                            cardlight: '#141F30',
+                            accent:    '#C9A227',
+                            gold:      '#D4AF37',
+                            goldlight: '#F0D98A',
+                            muted:     '#64748B',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    animation: {
+                        'float':        'float 6s ease-in-out infinite',
+                        'float-slow':   'float 9s ease-in-out infinite',
+                        'pulse-slow':   'pulse 4s cubic-bezier(0.4,0,0.6,1) infinite',
+                        'spin-slow':    'spin 20s linear infinite',
+                        'shimmer':      'shimmer 2.5s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%':      { transform: 'translateY(-16px)' },
+                        },
+                        shimmer: {
+                            '0%':   { backgroundPosition: '-200% center' },
+                            '100%': { backgroundPosition: '200% center' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ============================================
+           BASE & SCROLLBAR
+        ============================================ */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #080C14; }
+        ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #C9A227; }
+
+        /* ============================================
+           NOISE TEXTURE OVERLAY
+        ============================================ */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* ============================================
+           SHIMMER TEXT
+        ============================================ */
+        .shimmer-text {
+            background: linear-gradient(
+                90deg,
+                #C9A227 0%,
+                #F0D98A 30%,
+                #D4AF37 50%,
+                #F0D98A 70%,
+                #C9A227 100%
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+
+        /* ============================================
+           GLASS CARD
+        ============================================ */
+        .glass-card {
+            background: rgba(15, 24, 38, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-card:hover {
+            background: rgba(20, 31, 48, 0.85);
+            border-color: rgba(201, 162, 39, 0.3);
+            transform: translateY(-8px);
+            box-shadow:
+                0 30px 60px -20px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(201, 162, 39, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        /* ============================================
+           HERO PARTICLES (CSS only)
+        ============================================ */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* ============================================
+           SECTION DIVIDER (angled clip)
+        ============================================ */
+        .clip-angle-bottom {
+            clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
+        }
+        .clip-angle-top {
+            clip-path: polygon(0 12%, 100% 0, 100% 100%, 0 100%);
+        }
+
+        /* ============================================
+           REVEAL ANIMATION
+        ============================================ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(40px);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* ============================================
+           GOLD LINE ACCENT
+        ============================================ */
+        .gold-line {
+            position: relative;
+            display: inline-block;
+        }
+        .gold-line::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #C9A227, transparent);
+        }
+
+        /* ============================================
+           NAV LINK UNDERLINE
+        ============================================ */
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #C9A227;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        /* ============================================
+           PROFILE TABLE ROW
+        ============================================ */
+        .profile-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(30, 41, 59, 0.8);
+            transition: background 0.3s ease;
+        }
+        .profile-row:last-child { border-bottom: none; }
+        .profile-row:hover { background: rgba(201, 162, 39, 0.03); }
+
+        @media (min-width: 768px) {
+            .profile-row {
+                grid-template-columns: 160px 1fr;
+                gap: 1.5rem;
+                align-items: start;
+            }
+        }
+
+        /* ============================================
+           BUTTON GLOW
+        ============================================ */
+        .btn-primary {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #C9A227 0%, #D4AF37 50%, #B8901F 100%);
+            color: #080C14;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px -8px rgba(201, 162, 39, 0.4);
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        .btn-primary:hover::before { left: 100%; }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 40px -8px rgba(201, 162, 39, 0.5);
+        }
+
+        .btn-secondary {
+            border: 1px solid rgba(100, 116, 139, 0.4);
+            background: rgba(15, 24, 38, 0.5);
+            color: #e2e8f0;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+        .btn-secondary:hover {
+            border-color: rgba(201, 162, 39, 0.5);
+            background: rgba(201, 162, 39, 0.05);
+            transform: translateY(-3px);
+        }
+
+        /* ============================================
+           BUSINESS CARD IMAGE OVERLAY
+        ============================================ */
+        .card-img-wrap {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+        }
+        .card-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-card:hover .card-img-wrap img {
+            transform: scale(1.08);
+        }
+        .card-img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                transparent 30%,
+                rgba(8, 12, 20, 0.6) 70%,
+                rgba(8, 12, 20, 0.95) 100%
+            );
+        }
+
+        /* ============================================
+           HERO VISUAL CARD
+        ============================================ */
+        .hero-visual-card {
+            background: rgba(15, 24, 38, 0.8);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 24px;
+            box-shadow:
+                0 40px 80px -20px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .hero-visual-card:hover {
+            transform: perspective(1000px) rotateY(-3deg) rotateX(2deg) scale(1.02);
+        }
+
+        /* ============================================
+           STAT BADGE
+        ============================================ */
+        .stat-item {
+            text-align: center;
+            padding: 1.25rem 1.5rem;
+            border-radius: 16px;
+            background: rgba(201, 162, 39, 0.04);
+            border: 1px solid rgba(201, 162, 39, 0.12);
+        }
+
+        /* ============================================
+           QUOTE BLOCK
+        ============================================ */
+        .quote-block {
+            position: relative;
+            background: linear-gradient(135deg, rgba(15,24,38,0.9) 0%, rgba(8,12,20,0.95) 100%);
+            border: 1px solid rgba(201, 162, 39, 0.15);
+            border-radius: 20px;
+            padding: 3rem;
+            overflow: hidden;
+        }
+        .quote-block::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 12rem;
+            font-weight: 900;
+            color: rgba(201, 162, 39, 0.04);
+            line-height: 1;
+            font-family: Georgia, serif;
+        }
+
+        /* ============================================
+           SECTION LABEL
+        ============================================ */
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 1rem;
+            border-radius: 100px;
+            background: rgba(201, 162, 39, 0.08);
+            border: 1px solid rgba(201, 162, 39, 0.2);
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: #C9A227;
+        }
+        .section-label::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #C9A227;
+        }
+    </style>
+</head>
+
+<body class="bg-brand-dark text-slate-100 font-sans antialiased overflow-x-hidden">
+
+<!-- ============================================================
+     HEADER NAVIGATION
+============================================================ -->
+<header id="main-header"
+        class="fixed top-0 left-0 w-full z-50 transition-all duration-500"
+        style="background: rgba(8,12,20,0); backdrop-filter: blur(0px);">
+
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+
+        <!-- Logo -->
+        <a href="#" class="flex items-center space-x-3 group">
+            <div class="relative w-10 h-10">
+                <div class="absolute inset-0 bg-gradient-to-br from-brand-gold to-amber-700 rounded-xl shadow-lg shadow-brand-gold/20 group-hover:shadow-brand-gold/40 transition-shadow duration-300"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="text-brand-dark font-black text-lg tracking-wider">B</span>
+                </div>
+            </div>
+            <div class="flex flex-col leading-none">
+                <span class="text-xl font-black tracking-[0.15em] text-white group-hover:text-brand-gold transition-colors duration-300">BM</span>
+                <span class="text-[8px] tracking-[0.25em] text-brand-muted uppercase mt-0.5">Next Standard</span>
+            </div>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center space-x-10">
+            <a href="#hero"     class="nav-link text-xs font-semibold tracking-[0.15em] text-slate-400 hover:text-white transition-colors duration-300 uppercase">Home</a>
+            <a href="#vision"   class="nav-link text-xs font-semibold tracking-[0.15em] text-slate-400 hover:text-white transition-colors duration-300 uppercase">Vision</a>
+            <a href="#services" class="nav-link text-xs font-semibold tracking-[0.15em] text-slate-400 hover:text-white transition-colors duration-300 uppercase">Business</a>
+            <a href="#profile"  class="nav-link text-xs font-semibold tracking-[0.15em] text-slate-400 hover:text-white transition-colors duration-300 uppercase">Profile</a>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button id="menu-btn"
+                class="md:hidden w-10 h-10 flex flex-col items-center justify-center space-y-1.5 group"
+                aria-label="Toggle Menu">
+            <span class="w-6 h-[1.5px] bg-slate-400 group-hover:bg-white transition-all duration-300 origin-center" id="bar1"></span>
+            <span class="w-4 h-[1.5px] bg-slate-400 group-hover:bg-white transition-all duration-300 ml-auto" id="bar2"></span>
+            <span class="w-6 h-[1.5px] bg-slate-400 group-hover:bg-white transition-all duration-300 origin-center" id="bar3"></span>
+        </button>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobile-menu"
+         class="hidden md:hidden absolute top-20 left-0 w-full border-b border-slate-800/60"
+         style="background: rgba(8,12,20,0.97); backdrop-filter: blur(20px);">
+        <div class="max-w-7xl mx-auto px-6 py-6 space-y-1">
+            <a href="#hero"     class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all" onclick="closeMobileMenu()">
+                <span class="text-brand-gold text-xs">01</span><span>HOME</span>
+            </a>
+            <a href="#vision"   class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all" onclick="closeMobileMenu()">
+                <span class="text-brand-gold text-xs">02</span><span>VISION</span>
+            </a>
+            <a href="#services" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all" onclick="closeMobileMenu()">
+                <span class="text-brand-gold text-xs">03</span><span>BUSINESS</span>
+            </a>
+            <a href="#profile"  class="flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all" onclick="closeMobileMenu()">
+                <span class="text-brand-gold text-xs">04</span><span>PROFILE</span>
+            </a>
+        </div>
+    </div>
+</header>
+
+
+<!-- ============================================================
+     HERO SECTION
+============================================================ -->
+<section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+
+    <!-- Background Layers -->
+    <div class="absolute inset-0 bg-brand-deeper"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse 80% 60% at 20% 40%, rgba(201,162,39,0.07) 0%, transparent 60%);"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse 60% 50% at 80% 70%, rgba(30,58,138,0.15) 0%, transparent 60%);"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse 40% 40% at 60% 20%, rgba(139,92,246,0.05) 0%, transparent 50%);"></div>
+
+    <!-- Grid Pattern -->
+    <div class="absolute inset-0 opacity-[0.025]"
+         style="background-image: linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px); background-size: 60px 60px;">
+    </div>
+
+    <!-- Decorative Circles -->
+    <div class="particle w-96 h-96 top-[-80px] right-[-80px] opacity-[0.04]"
+         style="background: radial-gradient(circle, #C9A227, transparent 70%); animation: float 8s ease-in-out infinite;"></div>
+    <div class="particle w-64 h-64 bottom-[10%] left-[-40px] opacity-[0.05]"
+         style="background: radial-gradient(circle, #3B82F6, transparent 70%); animation: float 11s ease-in-out infinite reverse;"></div>
+
+    <!-- Bottom Fade -->
+    <div class="absolute bottom-0 left-0 right-0 h-40 pointer-events-none"
+         style="background: linear-gradient(to top, #080C14, transparent);"></div>
+
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto px-6 pt-24 pb-20 relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+
+        <!-- Left: Text -->
+        <div class="lg:col-span-7 space-y-8">
+
+            <div class="section-label" style="opacity:0; animation: fadeInUp 0.8s 0.2s forwards;">
+                BM Official Showcase
+            </div>
+
+            <h1 class="text-4xl sm:text-5xl lg:text-[3.5rem] xl:text-[4rem] font-black leading-[1.1] tracking-tight text-white"
+                style="opacity:0; animation: fadeInUp 0.8s 0.4s forwards;">
+                日常に、新たな価値を。<br>
+                <span class="shimmer-text">常識を超える革新</span>を。
+            </h1>
+
+            <p class="text-base text-slate-400 leading-[1.9] max-w-xl"
+               style="opacity:0; animation: fadeInUp 0.8s 0.6s forwards;">
+                BMはスポーツ・ライフスタイル・デジタル領域を横断するマルチアプローチ事業体です。
+                個人から日常、そして世界を繋ぐ次のスタンダードを創造します。
+            </p>
+
+            <div class="flex flex-wrap gap-4"
+                 style="opacity:0; animation: fadeInUp 0.8s 0.8s forwards;">
+                <a href="#services" class="btn-primary">事業紹介を見る</a>
+                <a href="#vision"   class="btn-secondary">BMの理念</a>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="grid grid-cols-3 gap-4 pt-4"
+                 style="opacity:0; animation: fadeInUp 0.8s 1.0s forwards;">
+                <div class="stat-item">
+                    <div class="text-2xl font-black text-brand-gold">4</div>
+                    <div class="text-[10px] text-slate-500 tracking-widest mt-1 uppercase">Businesses</div>
+                </div>
+                <div class="stat-item">
+                    <div class="text-2xl font-black text-brand-gold">愛知</div>
+                    <div class="text-[10px] text-slate-500 tracking-widest mt-1 uppercase">Base</div>
+                </div>
+                <div class="stat-item">
+                    <div class="text-2xl font-black text-brand-gold">Global</div>
+                    <div class="text-[10px] text-slate-500 tracking-widest mt-1 uppercase">Reach</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Visual Card -->
+        <div class="lg:col-span-5 flex justify-center lg:justify-end"
+             style="opacity:0; animation: fadeInRight 0.9s 0.5s forwards;">
+            <div class="hero-visual-card w-full max-w-[380px] p-7">
+
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <p class="text-[10px] text-brand-gold tracking-[0.25em] font-bold uppercase mb-1">Our Domain</p>
+                        <p class="text-lg font-bold text-white">4 Pillars of BM</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-brand-gold/10 flex items-center justify-center">
+                        <i class="fa-solid fa-cubes text-brand-gold"></i>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <!-- Golf -->
+                    <div class="flex items-center space-x-3 p-3.5 rounded-xl"
+                         style="background: rgba(201,162,39,0.06); border: 1px solid rgba(201,162,39,0.12);">
+                        <div class="w-9 h-9 rounded-lg bg-brand-gold/10 flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-golf-ball-tee text-brand-gold text-sm"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-semibold text-white">Golf Lesson</p>
+                            <p class="text-[10px] text-slate-500 mt-0.5">パーソナル指導</p>
+                        </div>
+                        <span class="text-[9px] text-brand-gold bg-brand-gold/10 px-2 py-0.5 rounded-full font-bold">Personal</span>
+                    </div>
+                    <!-- Import -->
+                    <div class="flex items-center space-x-3 p-3.5 rounded-xl"
+                         style="background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.12);">
+                        <div class="w-9 h-9 rounded-lg bg-emerald-400/10 flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-globe text-emerald-400 text-sm"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-semibold text-white">Import & Sales</p>
+                            <p class="text-[10px] text-slate-500 mt-0.5">輸入・販売</p>
+                        </div>
+                        <span class="text-[9px] text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full font-bold">Global</span>
+                    </div>
+                    <!-- TikTok -->
+                    <div class="flex items-center space-x-3 p-3.5 rounded-xl"
+                         style="background: rgba(244,63,94,0.06); border: 1px solid rgba(244,63,94,0.12);">
+                        <div class="w-9 h-9 rounded-lg bg-rose-500/10 flex items-center justify-center flex-shrink-0">
+                            <i class="fa-brands fa-tiktok text-rose-400 text-sm"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-semibold text-white">TikTok Shop</p>
+                            <p class="text-[10px] text-slate-500 mt-0.5">ソーシャルコマース</p>
+                        </div>
+                        <span class="text-[9px] text-rose-400 bg-rose-400/10 px-2 py-0.5 rounded-full font-bold">TikTok</span>
+                    </div>
+                    <!-- EC -->
+                    <div class="flex items-center space-x-3 p-3.5 rounded-xl"
+                         style="background: rgba(34,211,238,0.06); border: 1px solid rgba(34,211,238,0.12);">
+                        <div class="w-9 h-9 rounded-lg bg-cyan-400/10 flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-cart-shopping text-cyan-400 text-sm"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-semibold text-white">E-Commerce</p>
+                            <p class="text-[10px] text-slate-500 mt-0.5">ネットショップ</p>
+                        </div>
+                        <span class="text-[9px] text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded-full font-bold">Web</span>
+                    </div>
+                </div>
+
+                <div class="mt-5 pt-4 flex justify-between items-center"
+                     style="border-top: 1px solid rgba(255,255,255,0.05);">
+                    <span class="text-[10px] text-slate-600">Established in Japan</span>
+                    <span class="text-[10px] text-slate-600">Aichi, Nagoya</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-2"
+         style="opacity:0; animation: fadeIn 1s 1.5s forwards;">
+        <span class="text-[9px] tracking-[0.3em] text-slate-600 uppercase">Scroll</span>
+        <div class="w-[1px] h-10" style="background: linear-gradient(to bottom, #C9A227, transparent); animation: pulse 2s ease-in-out infinite;"></div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     VISION SECTION
+============================================================ -->
+<section id="vision" class="py-32 relative overflow-hidden">
+
+    <!-- Background -->
+    <div class="absolute inset-0 bg-brand-card/30"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse 50% 60% at 90% 50%, rgba(30,58,138,0.1) 0%, transparent 60%);"></div>
+
+    <div class="max-w-6xl mx-auto px-6 relative z-10">
+
+        <!-- Section Header -->
+        <div class="text-center space-y-4 mb-20 reveal">
+            <div class="section-label mx-auto">Vision &amp; Mission</div>
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-white mt-4">私たちの存在意義</h2>
+            <div class="w-16 h-[2px] mx-auto mt-4" style="background: linear-gradient(90deg, transparent, #C9A227, transparent);"></div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+            <!-- Left: Message -->
+            <div class="space-y-7 reveal-left">
+                <h3 class="text-2xl md:text-3xl font-bold text-white leading-snug">
+                    フィジカルの最適化から、<br>
+                    <span class="text-brand-gold">デジタルコマースの最前線</span>まで。
+                </h3>
+                <div class="space-y-5 text-slate-400 leading-[1.9] text-sm md:text-base">
+                    <p>
+                        BMは、吉川貴広のもと、異なる4つの事業を融合させることで、シナジーを生み出しています。
+                    </p>
+                    <p>
+                        個人のパフォーマンスを最大化する「パーソナルゴルフレッスン」、人々の生活の質を向上させる「日用品・健康器具の輸入販売」、そして次世代のトレンドをつかむ「TikTokショップ」「eコマース運営」。
+                    </p>
+                    <p>
+                        全ての根底にあるのは、<strong class="text-slate-200 font-semibold">「価値あるものを、届くべき人へ届ける」</strong>という揺るぎない信念です。
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right: Pillars -->
+            <div class="space-y-5 reveal-right">
+                <!-- 01 -->
+                <div class="flex items-start space-x-5 p-5 rounded-2xl transition-all duration-300 hover:bg-white/[0.02]"
+                     style="border: 1px solid rgba(255,255,255,0.04);">
+                    <span class="text-3xl font-black text-brand-gold/40 leading-none mt-0.5 flex-shrink-0">01</span>
+                    <div>
+                        <h4 class="text-base font-bold text-white mb-1">クオリティファースト</h4>
+                        <p class="text-sm text-slate-500 leading-relaxed">
+                            レッスン、プロダクト、コンテンツ、すべてにおいて一歩先の体験を追求します。
+                        </p>
+                    </div>
+                </div>
+                <!-- 02 -->
+                <div class="flex items-start space-x-5 p-5 rounded-2xl transition-all duration-300 hover:bg-white/[0.02]"
+                     style="border: 1px solid rgba(255,255,255,0.04);">
+                    <span class="text-3xl font-black text-brand-gold/40 leading-none mt-0.5 flex-shrink-0">02</span>
+                    <div>
+                        <h4 class="text-base font-bold text-white mb-1">多角的なライフスタイルの提案</h4>
+                        <p class="text-sm text-slate-500 leading-relaxed">
+                            健康的な身体作りから、便利な日用品までトータルでライフスタイルをアップグレードします。
+                        </p>
+                    </div>
+                </div>
+                <!-- 03 -->
+                <div class="flex items-start space-x-5 p-5 rounded-2xl transition-all duration-300 hover:bg-white/[0.02]"
+                     style="border: 1px solid rgba(255,255,255,0.04);">
+                    <span class="text-3xl font-black text-brand-gold/40 leading-none mt-0.5 flex-shrink-0">03</span>
+                    <div>
+                        <h4 class="text-base font-bold text-white mb-1">グローバルとデジタルの融合</h4>
+                        <p class="text-sm text-slate-500 leading-relaxed">
+                            海外から厳選した製品を、SNSとECの力を活用して日本全国にお届けします。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     BUSINESS SECTION
+============================================================ -->
+<section id="services" class="py-32 relative overflow-hidden">
+
+    <!-- Background -->
+    <div class="absolute inset-0 bg-brand-deeper"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(201,162,39,0.04) 0%, transparent 60%);"></div>
+
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+
+        <!-- Section Header -->
+        <div class="text-center space-y-4 mb-20 reveal">
+            <div class="section-label mx-auto">What We Do</div>
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-white mt-4">
+                多角的なアプローチによる<br class="sm:hidden">4つの事業
+            </h2>
+            <p class="text-slate-500 max-w-xl mx-auto text-sm leading-relaxed mt-2">
+                BMが展開する、多様化するニーズに対応したプロフェッショナルな事業領域です。
+            </p>
+            <div class="w-16 h-[2px] mx-auto mt-4" style="background: linear-gradient(90deg, transparent, #C9A227, transparent);"></div>
+        </div>
+
+        <!-- Business Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+
+            <!-- 1. Golf Lesson -->
+            <div class="glass-card rounded-3xl overflow-hidden flex flex-col reveal">
+                <div class="card-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&w=1200&q=80"
+                         alt="Golf Lesson"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/0F1826/C9A227?text=Golf+Lesson'">
+                    <div class="card-img-overlay"></div>
+                    <span class="absolute top-4 left-4 z-10 text-[10px] font-black tracking-[0.15em] uppercase px-3 py-1.5 rounded-full"
+                          style="background: rgba(201,162,39,0.9); color: #080C14; backdrop-filter: blur(8px);">
+                        Golf Specialty
+                    </span>
+                </div>
+                <div class="p-8 flex flex-col flex-1">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fa-solid fa-golf-ball-tee text-brand-gold"></i>
+                        <span class="text-[10px] font-bold tracking-[0.2em] text-brand-gold uppercase">Personal Golf Lesson</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">パーソナルゴルフレッスン</h3>
+                    <p class="text-sm text-slate-400 leading-[1.9] flex-1">
+                        マンツーマンの指導により、スイング分析、身体の使い方からメンタルコントロールまで総合的にサポート。それぞれの骨格や柔軟性に最適化したゴルフライフの向上をお手伝いします。
+                    </p>
+                    <div class="flex flex-wrap gap-2 mt-6 pt-5" style="border-top: 1px solid rgba(255,255,255,0.05);">
+                        <span class="text-[10px] px-3 py-1 rounded-full text-slate-400" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">完全個別カルテ</span>
+                        <span class="text-[10px] px-3 py-1 rounded-full text-slate-400" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">スイング解析</span>
+                        <span class="text-[10px] px-3 py-1 rounded-full text-slate-400" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">初心者〜上級者対応</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Import & Sales -->
+            <div class="glass-card rounded-3xl overflow-hidden flex flex-col reveal" style="transition-delay: 0.1s;">
+                <div class="card-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1200&q=80"
+                         alt="Import & Sales"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/0F1826/34D399?text=Wellness+Goods'">
+                    <div class="card-img-overlay"></div>
+                    <span class="absolute top-4 left-4 z-10 text-[10px] font-black tracking-[0.15em] uppercase px-3 py-1.5 rounded-full"
+                          style="background: rgba(52,211,153,0.9); color: #080C14; backdrop-filter: blur(8px);">
+                        Import &amp; Health
+                    </span>
+                </div>
+                <div class="p-8 flex flex-col flex-1">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fa-solid fa-globe text-emerald-400"></i>
+                        <span class="text-[10px] font-bold tracking-[0.2em] text-emerald-400 uppercase">Global Trade</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">日用品・健康器具の輸入及び販売</h3>
+                    <p class="text-sm text-slate-400 leading-[1.9] flex-1">
+                        世界中から厳選した、日常生活を便利にする日用品や、日々の心と体のコンディショニングを支える高水準な健康器具をセレクトして輸入。日本の生活習慣に調和するクオリティを保証します。
+                    </p>
+                    <div class="flex flex-wrap gap-2 mt-6 pt-5" style="border-top: 1px solid rgba(255,255,255,0.05);">
+                        <span class="text-[10px] px-3 py-1 rounded-full text-slate-400" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">厳選インポート</span>
+                        <span class="text-[10px] px-3 py-1 rounded-full text-slate-400" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">ヘルスケア特化</span>
+                        <span class="text-[10px] px-3 py-1 rounded-full text-slate-400" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">安心の国内品質サポート</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. TikTok Shop -->
+            <div class="glass-card rounded-3xl overflow-hidden flex flex-col reveal" style="transition-delay: 0.2s;">
+                <div class="card-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=1200&q=80"
+                         alt="TikTok Shop"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/0F1826/F43F5E?text=TikTok+Shop'">
+                    <div class="card-img-overlay"></div>
+                    <span class="absolute top-4 left-4 z-10 text-[10px] font-black tracking-[0.15em] uppercase px-3 py-1.5 rounded-full"
+                          style="background: rgba(244,63,94,0.9); color: #fff; backdrop-filter: blur(8px);">
+                        Social Commerce
+                    </span>
+                </div>
+                <div class="p-8 flex flex-col flex-1">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fa-brands fa-tiktok text-rose-400"></i>
+                        <span class="text-[10px] font-bold tracking-[0.2em] text-rose-400 uppercase">TikTok Commerce</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">TikTokショップ運営</h3>
+                    <p class="text-sm text-slate-400 leading-[1.9] flex-1">
+                        SNSトレンドを徹底解析。映像表現と商品紹介をシームレスにつなぎ、現代のスマートな消費行動に最適な「見てすぐ買える」エキサイティングな購買体験を提供します。
+                    </p>
+                    <div class="flex flex-wrap gap-2 mt-6 pt-5" style="border-top: 1px solid rgba(255,255,255,0.05);">
+                        <span class="text-[10px] px-3 py-1 rounded-full text-slate-400" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">動画マーケティング</span>
+                        <span class="text-[10px] px-3 py-1 rounded-full text-slate-400" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">リアルタイムトレンド</span>
+                        <span class="text-[10px] px-3 py-1 rounded-full text-slate-400" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">シームレスEC</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. E-Commerce -->
+            <div class="glass-card rounded-3xl overflow-hidden flex flex-col reveal" style="transition-delay: 0.3s;">
+                <div class="card-img-wrap">
+                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1200&q=80"
+                         alt="E-Commerce"
+                         onerror="this.onerror=null; this.src='https://placehold.co/600x400/0F1826/22D3EE?text=E-Commerce'">
+                    <div class="card-img-overlay"></div>
+                    <span class="absolute top-4 left-4 z-10 text-[10px] font-black tracking-[0.15em] uppercase px-3 py-1.5 rounded-full"
+                          style="background: rgba(34,211,238,0.9); color: #080C14; backdrop-filter: blur(8px);">
+                        Web Retail
+                    </span>
+                </div>
+                <div class="p-8 flex flex-col flex-1">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fa-solid fa-cart-shopping text-cyan-400"></i>
+                        <span class="text-[10px] font-bold tracking-[0.2em] text-cyan-400 uppercase">E-Commerce Net Shop</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">eコマースネットショップ運営</h3>
+                    <p class="text-sm text-slate-400 leading-[1.9] flex-1">
+                        ユーザーエクスペリエンス（UX）を突き詰めたネットストアを展開。丁寧な配送品質管理と洗練された商品キュレーションによって、信頼性と満足度の高いショッピング環境を継続提供します。
+                    </p>
+                    <div class="flex flex-wrap gap-2 mt-6 pt-5" style="border-top: 1px solid rgba(255,255,255,0.05);">
+                        <span class="text-[10px] px-3 py-1 rounded-full text-slate-400" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">UXファーストデザイン</span>
+                        <span class="text-[10px] px-3 py-1 rounded-full text-slate-400" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">迅速デリバリー</span>
+                        <span class="text-[10px] px-3 py-1 rounded-full text-slate-400" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);">カスタマーハピネス</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     PROFILE SECTION
+============================================================ -->
+<section id="profile" class="py-32 relative overflow-hidden">
+
+    <!-- Background -->
+    <div class="absolute inset-0 bg-brand-card/20"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse 50% 60% at 10% 50%, rgba(201,162,39,0.04) 0%, transparent 60%);"></div>
+
+    <div class="max-w-4xl mx-auto px-6 relative z-10">
+
+        <!-- Section Header -->
+        <div class="text-center space-y-4 mb-20 reveal">
+            <div class="section-label mx-auto">About Us</div>
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-white mt-4">事業概要</h2>
+            <p class="text-slate-500 text-sm mt-2">BM の基礎情報をご案内します。</p>
+            <div class="w-16 h-[2px] mx-auto mt-4" style="background: linear-gradient(90deg, transparent, #C9A227, transparent);"></div>
+        </div>
+
+        <!-- Profile Table -->
+        <div class="rounded-2xl overflow-hidden reveal"
+             style="background: rgba(15,24,38,0.8); border: 1px solid rgba(255,255,255,0.06); backdrop-filter: blur(20px);">
+
+            <div class="profile-row">
+                <div class="text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase pt-0.5">屋号</div>
+                <div class="text-xl font-black text-white tracking-widest">BM</div>
+            </div>
+
+            <div class="profile-row">
+                <div class="text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase pt-0.5">代表者</div>
+                <div>
+                    <p class="text-base font-bold text-white">吉川 貴広</p>
+                    <p class="text-xs text-slate-500 mt-0.5">Takahiro Yoshikawa</p>
+                </div>
+            </div>
+
+            <div class="profile-row">
+                <div class="text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase pt-0.5">所在地</div>
+                <div>
+                    <p class="text-sm font-bold text-white">〒464-0037</p>
+                    <p class="text-sm text-slate-400 mt-0.5">愛知県名古屋市千種区楠元町</p>
+                </div>
+            </div>
+
+            <div class="profile-row">
+                <div class="text-[10px] font-bold tracking-[0.2em] text-slate-500 uppercase pt-0.5">事業内容</div>
+                <ul class="space-y-2">
+                    <li class="flex items-center space-x-3 text-sm text-slate-300">
+                        <span class="w-1.5 h-1.5 rounded-full bg-brand-gold flex-shrink-0"></span>
+                        <span>パーソナルゴルフレッスン</span>
+                    </li>
+                    <li class="flex items-center space-x-3 text-sm text-slate-300">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0"></span>
+                        <span>日用品、健康器具の輸入及び販売</span>
+                    </li>
+                    <li class="flex items-center space-x-3 text-sm text-slate-300">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-400 flex-shrink-0"></span>
+                        <span>TikTokショップ運営</span>
+                    </li>
+                    <li class="flex items-center space-x-3 text-sm text-slate-300">
+                        <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 flex-shrink-0"></span>
+                        <span>eコマースネットショップ運営</span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Quote Block -->
+        <div class="mt-12 quote-block reveal">
+            <div class="relative z-10 text-center">
+                <i class="fa-solid fa-quote-left text-brand-gold/30 text-4xl mb-6 block"></i>
+                <p class="text-slate-300 leading-[2] max-w-2xl mx-auto text-sm md:text-base italic">
+                    「私たちは、関わるすべての方々のフィジカル・ウェルビーイングの向上と、
+                    デジタルを介した日常の快適さを繋ぎ、新しいライフスタイルの価値をデザインしてまいります。」
+                </p>
+                <div class="mt-6 inline-flex items-center space-x-3">
+                    <div class="w-8 h-[1px] bg-brand-gold/40"></div>
+                    <span class="text-xs tracking-[0.25em] text-brand-gold font-bold">吉川 貴広</span>
+                    <div class="w-8 h-[1px] bg-brand-gold/40"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="relative overflow-hidden py-16" style="background: #050810; border-top: 1px solid rgba(255,255,255,0.04);">
+
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse 40% 60% at 50% 100%, rgba(201,162,39,0.03) 0%, transparent 60%);"></div>
+
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+
+        <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="relative w-9 h-9">
+                    <div class="absolute inset-0 bg-gradient-to-br from-brand-gold to-amber-700 rounded-xl"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <span class="text-brand-dark font-black text-sm">B</span>
+                    </div>
+                </div>
+                <div class="leading-none">
+                    <p class="text-base font-bold tracking-[0.15em] text-white">BM</p>
+                    <p class="text-[8px] text-slate-600 tracking-[0.2em] uppercase mt-0.5">Personal &amp; Digital Innovation</p>
+                </div>
+            </div>
+
+            <!-- Nav -->
+            <div class="flex flex-wrap justify-center gap-8">
+                <a href="#hero"     class="text-[10px] font-semibold tracking-[0.15em] text-slate-500 hover:text-brand-gold transition-colors uppercase">Home</a>
+                <a href="#vision"   class="text-[10px] font-semibold tracking-[0.15em] text-slate-500 hover:text-brand-gold transition-colors uppercase">Vision</a>
+                <a href="#services" class="text-[10px] font-semibold tracking-[0.15em] text-slate-500 hover:text-brand-gold transition-colors uppercase">Business</a>
+                <a href="#profile"  class="text-[10px] font-semibold tracking-[0.15em] text-slate-500 hover:text-brand-gold transition-colors uppercase">Profile</a>
+            </div>
+
+            <!-- Copyright -->
+            <p class="text-[10px] text-slate-600 tracking-wider">&copy; 2026 BM. All Rights Reserved.</p>
+        </div>
+
+        <!-- Divider -->
+        <div class="mt-10 pt-8" style="border-top: 1px solid rgba(255,255,255,0.04);">
+            <p class="text-center text-[10px] text-slate-700 tracking-widest uppercase">
+                Aichi, Nagoya &nbsp;&mdash;&nbsp; Japan
+            </p>
+        </div>
+    </div>
+</footer>
+
+
+<!-- ============================================================
+     SCRIPTS
+============================================================ -->
+<script>
+    /* -----------------------------------------------
+       Hero Fade-in Keyframes (injected via JS for
+       compatibility with inline style animation)
+    ----------------------------------------------- */
+    const heroStyle = document.createElement('style');
+    heroStyle.textContent = `
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+    `;
+    document.head.appendChild(heroStyle);
+
+    /* -----------------------------------------------
+       Header: Transparent → Solid on Scroll
+    ----------------------------------------------- */
+    const header = document.getElementById('main-header');
+
+    function updateHeader() {
+        if (window.scrollY > 60) {
+            header.style.background    = 'rgba(8,12,20,0.92)';
+            header.style.backdropFilter = 'blur(20px)';
+            header.style.borderBottom  = '1px solid rgba(255,255,255,0.05)';
+        } else {
+            header.style.background    = 'rgba(8,12,20,0)';
+            header.style.backdropFilter = 'blur(0px)';
+            header.style.borderBottom  = '1px solid transparent';
+        }
+    }
+    window.addEventListener('scroll', updateHeader, { passive: true });
+    updateHeader();
+
+    /* -----------------------------------------------
+       Mobile Menu Toggle
+    ----------------------------------------------- */
+    const menuBtn    = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const bar1 = document.getElementById('bar1');
+    const bar2 = document.getElementById('bar2');
+    const bar3 = document.getElementById('bar3');
+    let menuOpen = false;
+
+    menuBtn.addEventListener('click', () => {
+        menuOpen = !menuOpen;
+        mobileMenu.classList.toggle('hidden', !menuOpen);
+        // Animate hamburger → X
+        if (menuOpen) {
+            bar1.style.transform = 'translateY(6px) rotate(45deg)';
+            bar2.style.opacity   = '0';
+            bar3.style.transform = 'translateY(-6px) rotate(-45deg)';
+        } else {
+            bar1.style.transform = '';
+            bar2.style.opacity   = '1';
+            bar3.style.transform = '';
+        }
+    });
+
+    function closeMobileMenu() {
+        menuOpen = false;
+        mobileMenu.classList.add('hidden');
+        bar1.style.transform = '';
+        bar2.style.opacity   = '1';
+        bar3.style.transform = '';
+    }
+
+    /* -----------------------------------------------
+       Scroll Reveal
+    ----------------------------------------------- */
+    function runReveal() {
+        const threshold = 120;
+        document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
+            const top = el.getBoundingClientRect().top;
+            if (top < window.innerHeight - threshold) {
+                el.classList.add('active');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', runReveal, { passive: true });
+    window.addEventListener('load',   runReveal);
+    runReveal();
+</script>
+
+</body>
+</html>
